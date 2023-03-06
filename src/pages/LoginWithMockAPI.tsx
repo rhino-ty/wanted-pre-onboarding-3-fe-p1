@@ -16,24 +16,6 @@ interface User {
   userInfo: UserInfo;
 }
 
-const [userInfo, setUserInfo] = useState<UserInfo>({ username: "" });
-
-const _secret: string = "1234qwer!@#$";
-const login = async (username: string, password: string): Promise<LoginResponse | null> => {
-  // TODO: 올바른 username, password를 입력하면 {message: 'SUCCESS', token: (원하는 문자열)} 를 반환하세요.
-  const user: User | undefined = users.find((user: User) => {
-    return user.username === username && user.password === password;
-  });
-  return user
-    ? { message: "SUCCESS", token: JSON.stringify({ user: user.userInfo, secret: _secret }) }
-    : null;
-};
-
-const getUserInfo = async (token: string): Promise<{ username: string } | null> => {
-  // TODO: login 함수에서 받은 token을 이용해 사용자 정보를 받아오세요.
-  return { username: userInfo.username };
-};
-
 const users: User[] = [
   {
     username: "blue",
@@ -52,7 +34,31 @@ const users: User[] = [
   },
 ];
 
+const _secret: string = "1234qwer!@#$";
+const login = async (username: string, password: string): Promise<LoginResponse | null> => {
+  // TODO: 올바른 username, password를 입력하면 {message: 'SUCCESS', token: (원하는 문자열)} 를 반환하세요.
+  const user: User | undefined = users.find((user: User) => {
+    return user.username === username && user.password === password;
+  });
+  return user
+    ? { message: "SUCCESS", token: JSON.stringify({ user: user.userInfo, secret: _secret }) }
+    : null;
+};
+
+const getUserInfo = async (token: string): Promise<{ username: string } | null> => {
+  // TODO: login 함수에서 받은 token을 이용해 사용자 정보를 받아오세요.
+  const parsedToken = JSON.parse(token);
+  if (!parsedToken?.secret || parsedToken.secret !== _secret) return null;
+
+  const loggedUser: User | undefined = users.find((user: User) => {
+    if (user.userInfo.username === parsedToken.user.name) return user;
+  });
+  return loggedUser ? loggedUser.userInfo : null;
+};
+
 const LoginWithMockAPI = () => {
+  const [userInfo, setUserInfo] = useState<UserInfo>({ username: "" });
+
   const loginSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
