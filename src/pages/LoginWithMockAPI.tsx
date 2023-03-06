@@ -87,7 +87,9 @@ const LoginWithMockAPI = () => {
           Password:
           <input type="password" name="password" />
         </label>
-        <input type="submit" value="Submit" />
+        <button type="submit" value="Submit">
+          submit
+        </button>
         {/* TODO: 여기에 username과 password를 입력하는 input을 추가하세요. 제출을 위해 button도 추가하세요. */}
       </form>
       <div>
