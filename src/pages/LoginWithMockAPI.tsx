@@ -7,21 +7,50 @@ interface LoginResponse {
   message: LoginSuccessMessage | LoginFailMessage;
   token: string;
 }
-const [userInfo, setUserInfo] = useState({ username: "" });
+interface UserInfo {
+  username: string;
+}
+interface User {
+  username: string;
+  password: string;
+  userInfo: UserInfo;
+}
 
+const [userInfo, setUserInfo] = useState<UserInfo>({ username: "" });
+
+const _secret: string = "1234qwer!@#$";
 const login = async (username: string, password: string): Promise<LoginResponse | null> => {
   // TODO: 올바른 username, password를 입력하면 {message: 'SUCCESS', token: (원하는 문자열)} 를 반환하세요.
-  if (username && password) {
-    return { message: "SUCCESS", token: "bearer mytoken" };
-  } else {
-    return { message: "FAIL", token: "" };
-  }
+  const user: User | undefined = users.find((user: User) => {
+    return user.username === username && user.password === password;
+  });
+  return user
+    ? { message: "SUCCESS", token: JSON.stringify({ user: user.userInfo, secret: _secret }) }
+    : null;
 };
 
 const getUserInfo = async (token: string): Promise<{ username: string } | null> => {
   // TODO: login 함수에서 받은 token을 이용해 사용자 정보를 받아오세요.
   return { username: userInfo.username };
 };
+
+const users: User[] = [
+  {
+    username: "blue",
+    password: "1234",
+    userInfo: { username: "blueStragglr" },
+  },
+  {
+    username: "white",
+    password: "1234",
+    userInfo: { username: "whiteDwarf" },
+  },
+  {
+    username: "red",
+    password: "1234",
+    userInfo: { username: "redGiant" },
+  },
+];
 
 const LoginWithMockAPI = () => {
   const loginSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
