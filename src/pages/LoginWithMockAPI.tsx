@@ -37,7 +37,7 @@ const LoginWithMockAPI = () => {
     const userInfo = await getUserInfo(loginRes.token);
     if (!userInfo) return;
 
-    for (let [key, value] of formData.entries()) console.log(key, value);
+    setUserInfo(userInfo);
   };
 
   return (
