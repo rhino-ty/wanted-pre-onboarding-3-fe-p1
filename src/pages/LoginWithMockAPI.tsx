@@ -8,7 +8,7 @@ interface LoginResponse {
   token: string;
 }
 interface UserInfo {
-  username: string;
+  name: string;
 }
 interface User {
   username: string;
@@ -20,23 +20,24 @@ const users: User[] = [
   {
     username: "blue",
     password: "1234",
-    userInfo: { username: "blueStragglr" },
+    userInfo: { name: "blueStragglr" },
   },
   {
     username: "white",
     password: "1234",
-    userInfo: { username: "whiteDwarf" },
+    userInfo: { name: "whiteDwarf" },
   },
   {
     username: "red",
     password: "1234",
-    userInfo: { username: "redGiant" },
+    userInfo: { name: "redGiant" },
   },
 ];
-
 const _secret: string = "1234qwer!@#$";
+
 const login = async (username: string, password: string): Promise<LoginResponse | null> => {
   // TODO: 올바른 username, password를 입력하면 {message: 'SUCCESS', token: (원하는 문자열)} 를 반환하세요.
+
   const user: User | undefined = users.find((user: User) => {
     return user.username === username && user.password === password;
   });
@@ -45,30 +46,34 @@ const login = async (username: string, password: string): Promise<LoginResponse 
     : null;
 };
 
-const getUserInfo = async (token: string): Promise<{ username: string } | null> => {
+const getUserInfo = async (token: string): Promise<UserInfo | null> => {
   // TODO: login 함수에서 받은 token을 이용해 사용자 정보를 받아오세요.
+
   const parsedToken = JSON.parse(token);
   if (!parsedToken?.secret || parsedToken.secret !== _secret) return null;
 
   const loggedUser: User | undefined = users.find((user: User) => {
-    if (user.userInfo.username === parsedToken.user.name) return user;
+    if (user.userInfo.name === parsedToken.user.name) return user;
   });
   return loggedUser ? loggedUser.userInfo : null;
 };
 
 const LoginWithMockAPI = () => {
-  const [userInfo, setUserInfo] = useState<UserInfo>({ username: "" });
+  const [userInfo, setUserInfo] = useState<UserInfo>({ name: "" });
 
   const loginSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // TODO: form 에서 username과 password를 받아 login 함수를 호출하세요.
+
     const formData = new FormData(event.currentTarget);
+
     const loginRes = await login(
       formData.get("username") as string,
       formData.get("password") as string
     );
     if (!loginRes) return;
+
     const userInfo = await getUserInfo(loginRes.token);
     if (!userInfo) return;
 
